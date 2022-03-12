@@ -15,6 +15,14 @@ export const ACTIONS = {
   function reducer(state, { type, payload }) {
     switch (type) {
       case ACTIONS.ADD_DIGIT:
+          // to overwrite the digit after the result when click another digit without this it will be concatinated
+          if (state.overwrite) {
+              return {
+                  ...state,
+                  currentOperand: payload.digit,
+                  overwrite: false,
+              }
+          }
           // to add just one 0 because adding more than one it doesn't make any sense
           if (payload.digit === "0" && state.currentOperand=== "0"){ 
             return state
@@ -59,6 +67,7 @@ export const ACTIONS = {
             ...state,
             previousOperand: null,
             operation: null,
+            overwrite:true,
             currentOperand: evaluate(state)
         }
       case ACTIONS.CLEAR:
