@@ -70,6 +70,23 @@ export const ACTIONS = {
             overwrite:true,
             currentOperand: evaluate(state)
         }
+      case ACTIONS.DELETE_DIGIT:
+          if (state.overwrite){
+              return {
+                ...state,
+                overwrite: false,
+                currentOperand: null
+              }
+          }
+          if (state.currentOperand == null) return state
+          if (state.currentOperand.length == 1) {
+              return { ...state, currentOperand: null}
+          }
+
+          return {
+            ...state,
+            currentOperand: state.currentOperand.slice(0,-1)
+        }
       case ACTIONS.CLEAR:
           return {}
 
@@ -112,7 +129,7 @@ function App() {
         <div className="current-operand">{currentOperand}</div>
       </div>
       <button className="span-two" onClick={() => dispatch({type: ACTIONS.CLEAR})}>AC</button>
-      <button>DEL</button>
+      <button onClick={() => dispatch({type: ACTIONS.DELETE_DIGIT})}>DEL</button>
       <OperationButton operation="/" dispatch={dispatch}/>
       <DigitButton digit="1" dispatch={dispatch}/>
       <DigitButton digit="2" dispatch={dispatch}/>
