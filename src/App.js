@@ -1,4 +1,3 @@
-
 import { useReducer } from "react";
 import DigitButton from "./DigitButton";
 import OperationButton from "./OperationButton";
@@ -79,7 +78,7 @@ export const ACTIONS = {
               }
           }
           if (state.currentOperand == null) return state
-          if (state.currentOperand.length == 1) {
+          if (state.currentOperand.length === 1) {
               return { ...state, currentOperand: null}
           }
 
@@ -90,8 +89,9 @@ export const ACTIONS = {
       case ACTIONS.CLEAR:
           return {}
 
-        }
+    }
   }
+
   function evaluate({ currentOperand, previousOperand, operation }) {
     // convert currentOperand and previousOperand to numbers with parseFloat
     const prev = parseFloat(previousOperand) 
@@ -116,6 +116,19 @@ export const ACTIONS = {
     return computation.toString()
   }
 
+  //formatting the entire number with ',' separator
+  const INTEGER_FORMATTER = new Intl.NumberFormat("en-us", {
+    maximumFractionDigits: 0,
+  })
+  //separate the decimal to can do : (exp 12.002) 
+  //and do not do any formatter to the decimal part (exp 77,777.5555555559)
+  function formatOperand(operand) {
+    if (operand == null) return
+    const [integer, decimal] = operand.split(".")
+    if (decimal == null) return INTEGER_FORMATTER.format(integer)
+    return `${INTEGER_FORMATTER.format(integer)}.${decimal}`
+  }
+
 function App() {
     const [{ currentOperand, previousOperand, operation }, dispatch]= useReducer(
         reducer, 
@@ -125,8 +138,8 @@ function App() {
   return (
     <div className="calculator-grid">
       <div className="output">
-        <div className="previous-operand">{previousOperand} {operation}</div>
-        <div className="current-operand">{currentOperand}</div>
+        <div className="previous-operand">{formatOperand(previousOperand)} {operation}</div>
+        <div className="current-operand">{formatOperand(currentOperand)}</div>
       </div>
       <button className="span-two" onClick={() => dispatch({type: ACTIONS.CLEAR})}>AC</button>
       <button onClick={() => dispatch({type: ACTIONS.DELETE_DIGIT})}>DEL</button>
